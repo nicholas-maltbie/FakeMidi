@@ -6,8 +6,7 @@ public class Test {
     
     public static void main(String[] args) {
         Player player = new Player();
-        player.play("E5s A5s C6s B5s E5s B5s D6s C6i E6i G#5i" +
-            "E6i | A5s E5s A5s C6s B5s E5s B5s D6s C6i A5i Ri");
+        player.play("E5s A5s C6s B5s E5s B5s D6s C6i E6i");
     }
 
 }
