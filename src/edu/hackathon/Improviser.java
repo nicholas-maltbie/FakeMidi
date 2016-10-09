@@ -2,6 +2,7 @@ package edu.hackathon;
 
 public class Improviser {
 
+	public static final int COLORFUL_NOTE_LENGTH = 6;
 	
 	private LeadSheet inspiration;
 	
@@ -58,6 +59,10 @@ public class Improviser {
 			
 			//If next three notes are all ascending or descending, add a color note
 			
+			if (isAscending(melody, note, 3) || isDescending(melody, note, 3)) {
+				Note colorful = getColorNote(melody, note);
+				helper.addNote(colorful, COLORFUL_NOTE_LENGTH, tick - COLORFUL_NOTE_LENGTH / 3, melody[note].getVelocity() * 4 / 5);
+			}
 			
 			if (!current.isRest())
 				nonRest = current;
@@ -102,10 +107,14 @@ public class Improviser {
 	}
 	
 	public Note getColorNote(NoteEvent[] melody, int index) {
+		int generalDir = 0;
+		for(int l = melody.length - 1; l > 1 && l > melody.length - 5; l--) {
+			generalDir += melody[l - 1].getNote().getDist(melody[l].getNote());
+		}
 		Note currentNote = melody[index].getNote();
-		if (isDescending(melody, 0, index))
+		if (generalDir < 0)
 			currentNote = currentNote.getHalfStepDown();
-		if (isAscending(melody, 0, index))
+		if (generalDir > 0)
 			currentNote = currentNote.getHalfStepUp();
 		return currentNote;
 	}
