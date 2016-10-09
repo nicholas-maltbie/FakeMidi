@@ -19,6 +19,10 @@ public class NoteEvent {
 		return velocity;
 	}
 	
+	public void setVelocity(int velocity) {
+		this.velocity = velocity;
+	}
+	
 	public Note getNote() {
 		return note;
 	}

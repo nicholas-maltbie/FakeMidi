@@ -40,13 +40,13 @@ public class Improviser {
 				
 				if (isAscending(melody, note, 4) || isDescending(melody, note, 4)) {
 					Note colorful = getColorNote(melody, note);
-					System.out.println(colorful);
-					helper.addNote(colorful, 10, tick, 60);
+					//System.out.println(colorful);
+					helper.addNote(colorful, 10, tick - COLORFUL_NOTE_LENGTH / 2, 60);
 				}
 				helper.addNote(event.getNote(), event.getTicks(), tick, event.getVelocity());
 			}
 			
-			while(chordTick <= tick) {
+			while(chordTick <= tick && chordIndex < progression.length) {
 				ChordEvent c = progression[chordIndex];
 				if (!c.getChord().isBreak()) {
 					if (next != null && next.getNote().isRest()) {
@@ -226,8 +226,9 @@ public class Improviser {
 	
 	
 	public static void main(String[] args) {
-		LeadSheet entertainer = new LeadSheet("The Entertainer, Scott Joplin, 4/4, C,"
-				+ " Ci C#i Ei C+q Ei C+q Ei t(C+i;C+q) Rq Ri C+i D+i D#+i E+i C+i D+i t(E+i;E+i) Bi D+q C+q,"
+		LeadSheet entertainer = new LeadSheet("The Entertainer, Scott Joplin, 4/4, C," 
+				+ "Di Eq C+q Ei C+q Ei C+h. D+i D#+i E+i C+i D+i E+q Bi D+q C+h. Di D#i Ei C+q Ei C+q Ei C+h. Ai Gi F#i Ai C+i E+q D+i C+i Ai D+h. Di D#i Ei C+q Ei C+q Ei C+h. D+i D#+i E+i C+i D+i E+q Bi D+q C+h. D+i E+i C+i D+i E+q C+i D+i C+i E+i C+i D+i E+q C+i D+i C+i E+i C+i D+i E+q Bi D+q C+h. Di D#q C+q Ei C+q Ei C+h. D+i D#+i E+i C+i D+i E+q Bi D+q C+h. Di D#i Ei C+q Ei C+q Ei C+h. Ai Gi F#i Ai C+i E+q D+i C+i Ai D+h. Di D#i Ei C+q Ei C+q Ei C+h. D+i D#+i E+i C+i D+i E+q Bi D+q C+h. D+i E+i C+i D+i E+q C+i D+i C+i E+i C+i D+i E+q C+i D+i C+i E+i C+i D+i E+q Bi D+q C+h Ei Fi F#i Gq Ai Gq Ei Fi F#i Gq Ai Gq Ei Fi F#i Gq Ai Gq E+i C+i Gi Ai Bi C+i D+i E+i D+i C+i D+i Gi E+i F+i G+i A+i G+i E+i F+i G+q A+i G+q E+i F+i F#+i G+q A+i G+q. A+i A#+i B+h A+i F#+i D+i G+h Ei Fi F#i Gq Ai Gq Ei Fi F#i Gq Ai Gq E+i C+i Gi Ai Bi C+i D+i E+i D+i C+i D+i C+h Gi F#i Gi C+q Ai C+q Ai C+i Ai Gi C+i E+i G+q E+i C+i Gi Aq C+q E+i D+q C+h. Ei Fi F#i Gq Ai Gq Ei Fi F#i Gq Ai Gq Ei Fi F#i Gq Ai Gq E+i C+i Gi Ai Bi C+i D+i E+i D+i C+i D+i Gi E+i F+i G+i A+i G+i E+i F+i G+q A+i G+q E+i F+i F#+i G+q A+i G+q. A+i A#+i B+h A+i F#+i D+i G+h Ei Fi F#i Gq Ai Gq Ei Fi F#i Gq Ai Gq E+i C+i Gi Ai Bi C+i D+i E+i D+i C+i D+i C+h Gi F#i Gi C+q Ai C+q Ai C+i Ai Gi C+i E+i G+q E+i C+i Gi Aq C+q E+i D+q C+h. Di D#q C+q Ei C+q Ei C+h. D+i D#+i E+i C+i D+i E+q Bi D+q C+h. Di D#i Ei C+q Ei C+q Ei C+h. Ai Gi F#i Ai C+i E+q D+i C+i Ai D+h. Di D#i Ei C+q Ei C+q Ei C+h. D+i D#+i E+i C+i D+i E+q Bi D+q C+h. D+i E+i C+i D+i E+q C+i D+i C+i E+i C+i D+i E+q C+i D+i C+i E+i C+i D+i E+q Bi D+q C+h, "
+				//+ " Ci C#i Ei C+q Ei C+q Ei t(C+i;C+q) Rq Ri C+i D+i D#+i E+i C+i D+i t(E+i;E+i) Bi D+q C+q,"
 				+ " Rq Ch C7h Fw Ch Gmaj7h Cw");
 		Improviser joplin = new Improviser(entertainer);
 		joplin.makeMusic("EntertainingSong.mid");

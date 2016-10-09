@@ -57,10 +57,12 @@ public class Interface {
                     int note = key % 12;
                     String noteName = NOTE_NAMES[note];
                     int velocity = sm.getData2();
-                    if(melodyNote != -1)
-                    	melody += NOTE_NAMES[melodyNote % 12] + getNoteEquivOctave(melodyNote/12 - 1) + getNoteType((double)(ticks - start_tick) / sequence.getResolution()) + " ";
-                    start_tick = ticks;
-                    melodyNote = key;
+                    if(key != melodyNote) {
+	                    if(melodyNote != -1)
+	                    	melody += NOTE_NAMES[melodyNote % 12] + getNoteEquivOctave(melodyNote/12 - 1) + getNoteType((double)(ticks - start_tick) / sequence.getResolution()) + " ";
+	                    start_tick = ticks;
+	                    melodyNote = key;
+                    }
                 }
             } else {
                 //System.out.println("Other message: " + message.getClass());
