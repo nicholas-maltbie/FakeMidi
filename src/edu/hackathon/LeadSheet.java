@@ -114,6 +114,9 @@ public class LeadSheet {
 		chordProgression = new ArrayList<>();
 		for (String chordString : parts[5].trim().split(" ")) {
 			
+			if (chordString.isEmpty())
+				return;
+			
 			//System.out.println(chordString);
 			int typeLength = 1;
 			if (chordString.charAt(chordString.length() - 1) == '.')

@@ -29,6 +29,11 @@ public class Interface {
         System.out.println("Tempo is: " + sequence.getResolution());
         int melodyNote = -1;
         
+        int chordBeat = 0;
+        int beats = 0;
+        
+        String chords = "";
+        String queue = "";
         String melody = "";
         
         long start_tick = 0;
@@ -48,7 +53,11 @@ public class Interface {
                     String noteName = NOTE_NAMES[note];
                     int velocity = sm.getData2();
                     int offNote = key;
-                    if (melodyNote == offNote) {melodyNote = -1;
+                    if (melodyNote == offNote) {
+                    	String noteNameThing =  NOTE_NAMES[melodyNote % 12] + getNoteEquivOctave(melodyNote/12 - 1) + 
+                    			getNoteType((double)(ticks - start_tick) / sequence.getResolution()) + " ";
+                    	melody += noteNameThing;
+                    	melodyNote = -1;
                     }
                     //System.out.println("Note off, " + noteName + octave + " key=" + key + " velocity: " + velocity);
                 } else if (sm.getCommand() == NOTE_ON) {
@@ -59,7 +68,23 @@ public class Interface {
                     int velocity = sm.getData2();
                     if(key != melodyNote) {
 	                    if(melodyNote != -1)
-	                    	melody += NOTE_NAMES[melodyNote % 12] + getNoteEquivOctave(melodyNote/12 - 1) + getNoteType((double)(ticks - start_tick) / sequence.getResolution()) + " ";
+	                    {
+	                    	String noteNameThing =  NOTE_NAMES[melodyNote % 12] + getNoteEquivOctave(melodyNote/12 - 1) + 
+	                    			getNoteType((double)(ticks - start_tick) / sequence.getResolution()) + " ";
+	                    	melody += noteNameThing;
+	                    	/*queue += noteNameThing;
+                			beats += (int)((double)(ticks - start_tick) / sequence.getResolution());
+                			if (beats > chordBeat) {
+                				System.out.println("After \'" + queue + "\', what chord is played?");
+                				String chordName = scanner.next();
+                				System.out.println("How many beats does " + chordName + " play for?");
+                				int count = scanner.nextInt();
+                				beats += count * sequence.getResolution();
+                				chords += chordName + getNoteType(count) + " ";
+                				queue = "";
+                			}*/
+	                    }
+	                    
 	                    start_tick = ticks;
 	                    melodyNote = key;
                     }
@@ -70,9 +95,30 @@ public class Interface {
             
             //System.out.println();
         }
-        
-        System.out.println(melody);
 
+        System.out.println("Give me the title! ");
+        String title = scanner.nextLine();
+        
+        System.out.println("Give me the composer! ");
+        String composer = scanner.nextLine();
+        
+        System.out.println("Give me the time signature! (top/bottom) ");
+        String time = scanner.nextLine();
+        
+        System.out.println("Give me the key signature! " );
+        String key = scanner.nextLine();
+        
+		LeadSheet entertainer = new LeadSheet(title + ", " + composer + ", " + time + ", " + key + ", " + melody + ", " + chords);
+				// + "Di Eq C+q Ei C+q Ei C+h. D+i D#+i E+i C+i D+i E+q Bi D+q C+h. Di D#i Ei C+q Ei C+q Ei C+h. Ai Gi F#i Ai C+i E+q D+i C+i Ai D+h. Di D#i Ei C+q Ei C+q Ei C+h. D+i D#+i E+i C+i D+i E+q Bi D+q C+h. D+i E+i C+i D+i E+q C+i D+i C+i E+i C+i D+i E+q C+i D+i C+i E+i C+i D+i E+q Bi D+q C+h. Di D#q C+q Ei C+q Ei C+h. D+i D#+i E+i C+i D+i E+q Bi D+q C+h. Di D#i Ei C+q Ei C+q Ei C+h. Ai Gi F#i Ai C+i E+q D+i C+i Ai D+h. Di D#i Ei C+q Ei C+q Ei C+h. D+i D#+i E+i C+i D+i E+q Bi D+q C+h. D+i E+i C+i D+i E+q C+i D+i C+i E+i C+i D+i E+q C+i D+i C+i E+i C+i D+i E+q Bi D+q C+h Ei Fi F#i Gq Ai Gq Ei Fi F#i Gq Ai Gq Ei Fi F#i Gq Ai Gq E+i C+i Gi Ai Bi C+i D+i E+i D+i C+i D+i Gi E+i F+i G+i A+i G+i E+i F+i G+q A+i G+q E+i F+i F#+i G+q A+i G+q. A+i A#+i B+h A+i F#+i D+i G+h Ei Fi F#i Gq Ai Gq Ei Fi F#i Gq Ai Gq E+i C+i Gi Ai Bi C+i D+i E+i D+i C+i D+i C+h Gi F#i Gi C+q Ai C+q Ai C+i Ai Gi C+i E+i G+q E+i C+i Gi Aq C+q E+i D+q C+h. Ei Fi F#i Gq Ai Gq Ei Fi F#i Gq Ai Gq Ei Fi F#i Gq Ai Gq E+i C+i Gi Ai Bi C+i D+i E+i D+i C+i D+i Gi E+i F+i G+i A+i G+i E+i F+i G+q A+i G+q E+i F+i F#+i G+q A+i G+q. A+i A#+i B+h A+i F#+i D+i G+h Ei Fi F#i Gq Ai Gq Ei Fi F#i Gq Ai Gq E+i C+i Gi Ai Bi C+i D+i E+i D+i C+i D+i C+h Gi F#i Gi C+q Ai C+q Ai C+i Ai Gi C+i E+i G+q E+i C+i Gi Aq C+q E+i D+q C+h. Di D#q C+q Ei C+q Ei C+h. D+i D#+i E+i C+i D+i E+q Bi D+q C+h. Di D#i Ei C+q Ei C+q Ei C+h. Ai Gi F#i Ai C+i E+q D+i C+i Ai D+h. Di D#i Ei C+q Ei C+q Ei C+h. D+i D#+i E+i C+i D+i E+q Bi D+q C+h. D+i E+i C+i D+i E+q C+i D+i C+i E+i C+i D+i E+q C+i D+i C+i E+i C+i D+i E+q Bi D+q C+h, "
+				//+ " Ci C#i Ei C+q Ei C+q Ei t(C+i;C+q) Rq Ri C+i D+i D#+i E+i C+i D+i t(E+i;E+i) Bi D+q C+q,"
+				//+ " Rq Ch C7h Fw Ch Gmaj7h Cw");
+		Improviser joplin = new Improviser(entertainer);
+		System.out.println("Give me an output file name (include .mid)!" );
+		joplin.makeMusic(scanner.nextLine());
+        
+        System.out.println(title + ", " + composer + ", " + time + ", " + key + ", " + melody + ", " + chords);
+        
+        
     }
     
     public static String getNoteType(double beats) {

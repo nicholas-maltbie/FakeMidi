@@ -25,6 +25,11 @@ public class Improviser {
 			i++;
 		}
 		
+		for (int iteration = 0; iteration < 4 ; iteration++)
+			for (int n = 3; n < melody.length - 3; n++) {
+				melody[n].setVelocity((int)(melody[n].getVelocity() * getInterest(melody, n)));
+			}
+			
 		for(int note = 0; note < melody.length; note++) {
 			NoteEvent event = melody[note];
 			
@@ -43,6 +48,12 @@ public class Improviser {
 					//System.out.println(colorful);
 					helper.addNote(colorful, 10, tick - COLORFUL_NOTE_LENGTH / 2, 60);
 				}
+				
+				if (getLengthComparedToNeighbors(melody, note, 15) > 1.5 && chordIndex < progression.length + 1) {
+					int added = addDownScale(melody[note], tick, progression[chordIndex].getChord(), progression[chordIndex + 1].getChord(), helper);
+					chordTick += added;
+					tick += added;
+				}
 				helper.addNote(event.getNote(), event.getTicks(), tick, event.getVelocity());
 			}
 			
@@ -51,7 +62,7 @@ public class Improviser {
 				if (!c.getChord().isBreak()) {
 					if (next != null && next.getNote().isRest()) {
 						int added = playBrokenChord(c, tick, helper, Direction.UP_DOWN, StyleTiming.MIDDLE);
-						added = added * 10 / 7;
+						added = added * 8 / 7;
 						chordTick += added;
 						tick += added;
 					}
@@ -75,6 +86,31 @@ public class Improviser {
 			
 		}
 		helper.writeToFile(title);
+	}
+	
+	/**
+	 * This will get the notes before and after a specific note and will average how much 
+	 * longer it is than the notes around it. 
+	 * @param melody
+	 * @param index
+	 * @param search
+	 * @return A float between 0.9 and 1.2
+	 */
+	public double getLengthComparedToNeighbors(NoteEvent[] melody, int index, int search) {
+		double weight = 1.0;
+		for(int comp = Math.max(0, index - search); comp < search * 2 && comp < melody.length; comp++) {
+			//determine weight affect by 0.1 * log(index.getTicks() / comp.getTicks()) / log(2) * 5 / search
+			if (!melody[comp].getNote().isRest()) {
+				if(melody[comp].getTicks() > melody[index].getTicks())
+					weight -= 0.1 / search;
+				else if (melody[comp].getTicks() < melody[index].getTicks())
+					weight += 0.1 / search;
+			}
+			
+		}
+		return weight;
+		
+		
 	}
 	
 	enum Direction {UP, DOWN, UP_DOWN, DOWN_UP};
@@ -154,6 +190,16 @@ public class Improviser {
 				event.addSelfToMidi(helper, tick);
 				tick += event.getTicks() - 2;
 			}
+	}
+	
+	/**
+	 * Return a down scale of any number of steps (somewhere between 3 
+	 * @param highNote
+	 * @param helper
+	 * @return
+	 */
+	public int addDownScale(NoteEvent highNote, int tick, Chord start, Chord end, AidedMidi helper) {
+		return 0;
 	}
 	
 	public int playBrokenChord(ChordEvent chord, int tick, AidedMidi helper, Direction dir, StyleTiming timing) {
@@ -236,8 +282,10 @@ public class Improviser {
 	}
 	
 	public double getInterest(NoteEvent[] melody, int index) {
+		if (index <= 0 || index >= melody.length - 1)
+			return 1.0;
 		int currentVelocity = melody[index].getVelocity();
-		double final_interest = 0;
+		double final_interest = 1;
 		double low_interest = .02;
 		double high_interest = .05;
 		
