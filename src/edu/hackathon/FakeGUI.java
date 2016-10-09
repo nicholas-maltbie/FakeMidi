@@ -33,6 +33,8 @@ public class FakeGUI extends JFrame implements ActionListener {
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		this.setResizable(false);
+		
 		this.setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		
 		loadButton = new JButton("Load File");
@@ -54,7 +56,7 @@ public class FakeGUI extends JFrame implements ActionListener {
 		exportText = new JTextField("Export location");
 		loadText = new JTextField("Load file");
 		
-		ImageIcon icon = new ImageIcon("fakemidi.png");
+		ImageIcon icon = new ImageIcon("src" + File.separator + "fakemidi.png");
 		JLabel label = new JLabel();
 		label.setIcon(icon);
 		label.setAlignmentX(LEFT_ALIGNMENT);
