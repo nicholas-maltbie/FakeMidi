@@ -22,4 +22,10 @@ public class ChordEvent {
 	public Chord getChord() {
 		return chord;
 	}
+	
+	public void addSelfToMidi(AidedMidi helper, int tick) {
+		for (Note note : chord.getNotes()) {
+			helper.addNote(note, ticks, tick, velocity);
+		}
+	}
 }
