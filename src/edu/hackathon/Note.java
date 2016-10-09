@@ -4,16 +4,18 @@ import java.math.*;
 
 public class Note {
 	
-	public static final String[] PATTERN = {"A", "A#/Bb", "B", "C", 
-			"C#/Db", "E", "F4", "F#/Gb", "G", "G#/Ab"};
+	public static final String[] PATTERN = {"C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B"};
 	
 	private int number;
 	
 	public Note(String name) {
 		int note = -1;
+		String start = name.substring(0, 1);
+		if(name.indexOf('#') > -1 || name.indexOf('b') > -1)
+			start = name.substring(0, 2);
 		for (int i = 0; i < PATTERN.length; i++) {
 			for (String possible : PATTERN[i].split("/")) {
-				if (name.startsWith(possible)) {
+				if (start.equals(possible)) {
 					note = i;
 					break;
 				}
@@ -22,7 +24,23 @@ public class Note {
 				break;
 		}
 		
-		System.out.println(note);
+		int octave = 0;
+		if(name.indexOf('-') > -1) {
+			String rest = name.substring(name.indexOf('-')+1);
+			if (rest.isEmpty())
+				octave = -1;
+			else
+				octave = -Integer.parseInt(rest);
+		}
+		if(name.indexOf('+') > -1) {
+			String rest = name.substring(name.indexOf('+')+1);
+			if (rest.isEmpty())
+				octave = 1;
+			else
+				octave = Integer.parseInt(rest);
+		}
+		
+		number = 40 + octave * 12 + note;
 	}
 	
 	public Note(int number) {
@@ -34,7 +52,7 @@ public class Note {
 	}
 	
 	public double getFrequency() {
-		return Math.pow(2, (number - 49) / 12) * 440;
+		return Math.pow(2, (number - 49.0) / 12) * 440;
 	}
 	
 	public Note getWholeStepUp() {
@@ -55,8 +73,10 @@ public class Note {
 
 	
 	public static void main(String[] args) {
-		new Note("A");
-		new Note("A#");
-		new Note("Bb");
+		System.out.println(new Note("Eb+3").getFrequency());
+		System.out.println(new Note("C#").getFrequency());
+		System.out.println(new Note("Db").getFrequency());
+		System.out.println(new Note("D").getFrequency());
+		System.out.println(new Note("D#").getFrequency());
 	}
 }
