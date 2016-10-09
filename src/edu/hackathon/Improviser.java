@@ -71,26 +71,43 @@ public class Improviser {
 	enum StyleTiming {FIRST, LAST, MIDDLE};
 	
 	public boolean isDescending(NoteEvent[] melody, int index, int length) {
-		
+		if (index + length > melody.length)
+			return false;
+		for (int i = index; i < index + length; i++) {
+			if (melody[i].getNote().getNumber() <= melody[i + 1].getNote().getNumber())
+				return false;
+		}
+		return true;
 	}
 	
 	public boolean isAscending(NoteEvent[] melody, int index, int length) {
-		
+		if (index + length > melody.length)
+			return false;
+		for (int i = index; i < index + length; i++) {
+			if (melody[i].getNote().getNumber() >= melody[i + 1].getNote().getNumber())
+				return false;
+		}
+		return true;
 	}
 	
-	/***
-	 * Is this note at index in melody before a direction in the path of the notes 
-	 * or followed by a rest. This will be false for the first and last notes.
-	 * @param melody List of notes in a song
-	 * @param index Index to check
-	 * @return
-	 */
 	public boolean isBeforeChange(NoteEvent[] melody, int index) {
-		
+		if (index == 0 || index == (melody.length - 1))
+			return false;
+		int currentNote = melody[index].getNote().getNumber();
+		int noteBefore = melody[index - 1].getNote().getNumber();
+		int noteAfter = melody[index + 1].getNote().getNumber();
+		if (noteBefore != currentNote && noteAfter != currentNote && ((noteBefore >= currentNote && currentNote >= noteAfter) || (noteBefore <= currentNote && currentNote <= noteAfter)))
+			return false;
+		return true;
 	}
 	
 	public Note getColorNote(NoteEvent[] melody, int index) {
-		
+		Note currentNote = melody[index].getNote();
+		if (isDescending(melody, 0, index))
+			currentNote = currentNote.getHalfStepDown();
+		if (isAscending(melody, 0, index))
+			currentNote = currentNote.getHalfStepUp();
+		return currentNote;
 	}
 	
 	public void playEndingInversions(NoteEvent[] melody, AidedMidi helper, ChordEvent last, int tick) {
