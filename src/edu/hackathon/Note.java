@@ -7,8 +7,14 @@ public class Note {
 	public static final String[] PATTERN = {"C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B"};
 	
 	private int number;
+	private boolean isRest;
 	
 	public Note(String name) {
+		if (name.equals("R")) {
+			isRest = true;
+			return;
+		}
+		
 		int note = -1;
 		String start = name.substring(0, 1);
 		if(name.indexOf('#') > -1 || name.indexOf('b') > -1)
