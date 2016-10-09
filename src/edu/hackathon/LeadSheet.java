@@ -68,6 +68,10 @@ public class LeadSheet {
 	public static final int TICKS_PER_BEAT = 24;
 	public static final int DEFAULT_VELOCITY = 60;
 	
+	public String getKey() {
+		return key;
+	}
+	
 	public LeadSheet(String leadSheet) {
 		String[] parts = leadSheet.split(",");
 		title = parts[0].trim();
@@ -111,6 +115,8 @@ public class LeadSheet {
 			}
 		}
 		
+		
+		//System.out.println(parts[4] + "\n" + parts[5]);
 		chordProgression = new ArrayList<>();
 		for (String chordString : parts[5].trim().split(" ")) {
 			

@@ -1,5 +1,9 @@
 package edu.hackathon;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Improviser {
 
 	public static final int COLORFUL_NOTE_LENGTH = 6;
@@ -49,7 +53,7 @@ public class Improviser {
 					helper.addNote(colorful, 10, tick - COLORFUL_NOTE_LENGTH / 2, 60);
 				}
 				
-				if (getLengthComparedToNeighbors(melody, note, 15) > 1.5 && chordIndex < progression.length + 1) {
+				if (chordIndex < progression.length -1  && getLengthComparedToNeighbors(melody, note, 15) > 1.1) {
 					int added = addDownScale(melody[note], tick, progression[chordIndex].getChord(), progression[chordIndex + 1].getChord(), helper);
 					chordTick += added;
 					tick += added;
@@ -164,7 +168,7 @@ public class Improviser {
 
 			//Get the melody direction for the last 5 notes
 			int generalDir = 0;
-			for(int l = melody.length - 1; l > 1 && l > melody.length - 5; l--) {
+			for(int l = melody.length- 1; l > 1 && l > melody.length - 5; l--) {
 				generalDir += melody[l - 1].getNote().getDist(melody[l].getNote());
 			}
 			
@@ -199,6 +203,28 @@ public class Improviser {
 	 * @return
 	 */
 	public int addDownScale(NoteEvent highNote, int tick, Chord start, Chord end, AidedMidi helper) {
+		Note[] notes = start.getNotes();
+		Note[] extra = new Note[notes.length + 1];
+		while (start.getHighestNote().getNumber() < highNote.getNote().getOctaveUp().getNumber())
+			start = start.getInversionUp(1);
+		while (start.getHighestNote().getNumber() > highNote.getNote().getOctaveUp().getNumber())
+			start = start.getInversionDown(1);
+		for (int note = 0; note < notes.length; note++)
+			extra[note] = notes[note];
+		extra[extra.length - 1] = highNote.getNote();
+		
+		Chord chord = new Chord(new ArrayList<>(Arrays.asList(extra)));
+		
+		Direction[] pattern = {Direction.UP, Direction.DOWN, Direction.UP_DOWN, Direction.UP_DOWN, Direction.UP};
+		StyleTiming[] styles = {StyleTiming.LAST, StyleTiming.FIRST, StyleTiming.MIDDLE, StyleTiming.MIDDLE, StyleTiming.FIRST};
+		
+		for(int i = 0; i < 5; i++) {
+			//System.out.println("ASDF");
+			ChordEvent event = new ChordEvent(highNote.getTicks() * 2, highNote.getVelocity() / 2, chord);
+			tick += playBrokenChord(event, tick, helper, pattern[i], styles[i]);
+			chord = chord.getInversionDown(1);
+		}
+		
 		return 0;
 	}
 	
