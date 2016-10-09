@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * 	a t(not;note) means note and note are tied
  * 
  * 	"The Entertainer, Scott Joplin, 4/4, C, Ei C+q Ei C+q Ei t(C+i;C+q) Rq Ri C+i D+i D#+i E+i C+i D+i t(E+i;E+i) B+i D+q C+q,
- * 		Ch Cmaj7h Fw Ch Gmaj7h C"
+ * 		Ch Cmaj7h Fw Ch Gmaj7h Cw"
  * 
  * notes are saved as follows: notelength
  * 	note or rest, for example:
@@ -79,41 +79,65 @@ public class LeadSheet {
 		
 		melody = new ArrayList<>();
 		for (String noteString : parts[4].trim().split(" ")) {
-			int typeLength = 1;
-			if (noteString.charAt(noteString.length() - 1) == '.')
-				typeLength = 2;
-			String note = noteString.substring(0, noteString.length() - typeLength);
-			String type = noteString.substring(noteString.length() - typeLength);
-			Note noteValue = new Note(note);
-			int ticks = getTicks(type.substring(0, 1));
-			if (typeLength == 2)
-				ticks = (int)(ticks * 1.5);
-			melody.add(new NoteEvent(ticks, 60, noteValue));
+			if (noteString.startsWith("t")) {
+				String[] tied = noteString.substring(2, noteString.length() - 1).split(";");
+				int totalTicks = 0;
+				Note noteValue = new Note("C");
+				for (String tie : tied) {
+					int typeLength = 1;
+					if (tie.charAt(tie.length() - 1) == '.')
+						typeLength = 2;
+					String note = tie.substring(0, tie.length() - typeLength);
+					String type = tie.substring(tie.length() - typeLength);
+					noteValue = new Note(note);
+					int ticks = getTicks(type.substring(0, 1));
+					if (typeLength == 2)
+						ticks = (int)(ticks * 1.5);
+					totalTicks += ticks;
+				}		
+				melody.add(new NoteEvent(totalTicks, 60, noteValue));
+			}
+			else {
+				int typeLength = 1;
+				if (noteString.charAt(noteString.length() - 1) == '.')
+					typeLength = 2;
+				String note = noteString.substring(0, noteString.length() - typeLength);
+				String type = noteString.substring(noteString.length() - typeLength);
+				Note noteValue = new Note(note);
+				int ticks = getTicks(type.substring(0, 1));
+				if (typeLength == 2)
+					ticks = (int)(ticks * 1.5);
+				melody.add(new NoteEvent(ticks, 60, noteValue));
+			}
 		}
 		
 		chordProgression = new ArrayList<>();
 		for (String chordString : parts[5].trim().split(" ")) {
+			
+			//System.out.println(chordString);
 			int typeLength = 1;
 			if (chordString.charAt(chordString.length() - 1) == '.')
 				typeLength = 2;
-			chordString = chordString.substring(0, chordString.length() - typeLength);
 			String type = chordString.substring(chordString.length() - typeLength);
 			int ticks = getTicks(type.substring(0, 1));
 			if (typeLength == 2)
 				ticks = (int)(ticks * 1.5);
+			chordString = chordString.substring(0, chordString.length() - typeLength);
 			
-			String numValue = "";
-			if (Character.isDigit(chordString.charAt(chordString.length() - 1))) {
-				numValue = chordString.substring(chordString.length() - 1);
-				chordString = chordString.substring(0, chordString.length() - 1);
-			}
 			String noteValue = "";
 			int noteLength = 1;
-			if (chordString.charAt(1) == '#' || chordString.charAt(1) == 'b') 
+			if (chordString.length() > 1 && (chordString.charAt(1) == '#' || chordString.charAt(1) == 'b')) 
 				noteLength = 2;
 			noteValue = chordString.substring(0, noteLength);
 			chordString = chordString.substring(noteLength);
 			
+			String numValue = "";
+			if (!chordString.isEmpty() && Character.isDigit(chordString.charAt(chordString.length() - 1))) {
+				numValue = chordString.substring(chordString.length() - 1);
+				chordString = chordString.substring(0, chordString.length() - 1);
+			}
+			
+		
 			String typeValue = "maj";
 			if (chordString.equals("min") || chordString.equals("m"))
 				typeValue = "min";
@@ -121,6 +145,7 @@ public class LeadSheet {
 			chordString = noteValue + ":" + typeValue;
 			if (!numValue.isEmpty())
 				chordString += ":" + numValue;
+		
 			
 			chordProgression.add(new ChordEvent(ticks, 60, new Chord(chordString)));
 		}
@@ -133,10 +158,10 @@ public class LeadSheet {
 			case 'w': return 24 * 4;
 			case 'h': return 24 * 2;
 			case 'q': return 24;
-			case 'i': return 24 / 4;
-			case 's': return 24 / 8;
-			case 't': return 1;
-			case 'x': return 1;
+			case 'i': return 24 / 2;
+			case 's': return 24 / 4;
+			case 't': return 24 / 8;
+			case 'x': return 24 / 16;
 			case 'o': return 1;
 			default: return 1;
 		}

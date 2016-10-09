@@ -49,6 +49,14 @@ public class Note {
 		number = 40 + octave * 12 + note;
 	}
 	
+	public int getDist(Note other) {
+		return other.getNumber() - getNumber();
+	}
+	
+	public boolean isRest() {
+		return isRest;
+	}
+	
 	public Note(int number) {
 		this.number = number;
 	}

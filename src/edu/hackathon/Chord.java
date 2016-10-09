@@ -5,6 +5,8 @@ import java.util.*;
 public class Chord {
 	
 	private List<Note> notes;
+	private Note root;
+	private boolean isBreak;
 	
 	/**
 	 * root:type
@@ -16,8 +18,14 @@ public class Chord {
 	 * @param notes
 	 */
 	public Chord(String name) {
+		if (name.startsWith("R")) {
+			isBreak = true;
+			notes = new ArrayList<>();
+			return;
+		}
 		String[] parts = name.split(":");	
 		Note note = new Note(parts[0]);	
+		root = note;
 		Scale.Type type = Scale.Type.MAJOR;
 		if (parts[1].equals("min"))
 			type = Scale.Type.NATURAL_MINOR;
@@ -29,6 +37,18 @@ public class Chord {
 		if (parts.length > 2) 
 			notes.add(scale.getNote(7));
 
+	}
+	
+	public Note getRoot() {
+		return root;
+	}
+	
+	public boolean isBreak() {
+		return isBreak;
+	}
+	
+	public Note getHighestNote() {
+		return notes.get(notes.size() - 1);
 	}
 	
 	public Chord(List<Note> notes) {

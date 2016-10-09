@@ -29,7 +29,7 @@ public class AidedMidi {
 	
 	//****  set tempo (meta event)  ****
 			MetaMessage mt = new MetaMessage();
-	        byte[] bt = {0x02, (byte)0x00, 0x00};
+	        byte[] bt = {(byte)6, (byte)0x00, 0x00};
 			mt.setMessage(0x51 ,bt, 3);
 			me = new MidiEvent(mt,(long)0);
 			t.add(me);
