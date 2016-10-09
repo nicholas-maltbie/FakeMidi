@@ -144,7 +144,8 @@ public class LeadSheet {
 			String typeValue = "maj";
 			if (chordString.equals("min") || chordString.equals("m"))
 				typeValue = "min";
-			
+			else if (chordString.equals("dim"))
+				typeValue = "dim";
 			chordString = noteValue + ":" + typeValue;
 			if (!numValue.isEmpty())
 				chordString += ":" + numValue;

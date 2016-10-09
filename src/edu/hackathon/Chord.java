@@ -29,13 +29,15 @@ public class Chord {
 		Scale.Type type = Scale.Type.MAJOR;
 		if (parts[1].equals("min"))
 			type = Scale.Type.NATURAL_MINOR;
+		else if (parts[1].equals("dim"))
+			type = Scale.Type.MELODIC_MINOR;
 		Scale scale = new Scale(note, type);
 		notes = new ArrayList<>();	
 		notes.add(scale.getNote(1));
 		notes.add(scale.getNote(3));
 		notes.add(scale.getNote(5));
 		if (parts.length > 2) 
-			notes.add(scale.getNote(7));
+			notes.add(scale.getNote(Integer.parseInt(parts[2])));
 
 	}
 	
