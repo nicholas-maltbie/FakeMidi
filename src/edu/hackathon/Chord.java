@@ -31,11 +31,37 @@ public class Chord {
 
 	}
 	
+	public Chord(List<Note> notes) {
+		this.notes = notes;
+	}
+	
 	public Note[] getNotes() {
 		Note[] array = new Note[notes.size()];
 		for (int i = 0; i < array.length; i++) {
 			array[i] = notes.get(i);
 		}
 		return array;
+	}
+	
+	public Chord getInversionUp(int number) {
+		ArrayList<Note> copy = new ArrayList<Note>(notes);
+		for (int i = 0; i < number; i++) {
+			Note firstnote = copy.get(0);
+			firstnote = firstnote.getOctaveUp();
+			copy.remove(0);
+			copy.add(firstnote);
+		}	
+		return new Chord(copy);	
+	}
+	
+	public Chord getInversionDown(int number) {
+		ArrayList<Note> copy = new ArrayList<Note>(notes);
+		for (int i = 0; i < number; i++) {
+			Note lastnote = copy.get(copy.size() - 1);
+			lastnote = lastnote.getOctaveDown();
+			copy.remove(copy.size() - 1);
+			copy.add(0, lastnote);
+		}	
+		return new Chord(copy);	
 	}
 }
