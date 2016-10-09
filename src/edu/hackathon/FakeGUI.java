@@ -51,6 +51,12 @@ public class FakeGUI extends JFrame implements ActionListener {
 		
 		exportText = new JTextField("Export location");
 		loadText = new JTextField("Load file");
+		
+		ImageIcon fakemidi = new ImageIcon("fakemidi.png");
+		JLabel label = new JLabel("", fakemidi, JLabel.CENTER);
+		JPanel background = new JPanel();
+		background.add(label);
+		getContentPane().add(background);
 
 		JPanel loading = new JPanel();
 		loading.setLayout(new BoxLayout(loading, BoxLayout.LINE_AXIS));
