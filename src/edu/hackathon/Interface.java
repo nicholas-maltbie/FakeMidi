@@ -22,13 +22,8 @@ public class Interface {
         System.out.println("Which track number has the melody? (0 - " + (sequence.getTracks().length - 1) + ") ");
         
         Track track = sequence.getTracks()[scanner.nextInt()];
-        
-        System.out.println("Track " + trackNumber + ": size = " + track.size());
-        System.out.println();
-        
-        System.out.println("Tempo is: " + sequence.getResolution());
         int melodyNote = -1;
-        
+        long lastTick = -1;
         int chordBeat = 0;
         int beats = 0;
         
@@ -42,6 +37,8 @@ public class Interface {
             MidiEvent event = track.get(i);
             //System.out.print("@" + event.getTick() + " ");
             ticks = event.getTick();
+            if (ticks <= lastTick)
+            	continue;
             MidiMessage message = event.getMessage();
             if (message instanceof ShortMessage) {
                 ShortMessage sm = (ShortMessage) message;
@@ -92,9 +89,64 @@ public class Interface {
             } else {
                 //System.out.println("Other message: " + message.getClass());
             }
-            
-            //System.out.println();
+            lastTick = ticks;
         }
+
+        System.out.println("I have read the melody, which track has the chords? (0 - " + (sequence.getTracks().length - 1) + ") ");
+        
+        track = sequence.getTracks()[scanner.nextInt()];
+        int chordNote = -1;
+        
+        chords = "";
+        lastTick = -1;
+        start_tick = 0;
+        ticks = 0;
+        for (int i=0; i < track.size(); i++) { 
+            MidiEvent event = track.get(i);
+            //System.out.print("@" + event.getTick() + " ");
+            ticks = event.getTick();
+            if (ticks <= lastTick)
+            	continue;
+            
+            MidiMessage message = event.getMessage();
+            if (message instanceof ShortMessage) {
+                ShortMessage sm = (ShortMessage) message;
+                //System.out.print("Channel: " + sm.getChannel() + " ");
+                if (sm.getCommand() == NOTE_OFF) {
+                    int key = sm.getData1();
+                    int octave = (key / 12)-1;
+                    int note = key % 12;
+                    String noteName = NOTE_NAMES[note];
+                    int velocity = sm.getData2();
+                    int offNote = key;
+                    if (chordNote == offNote) {
+                    	String noteNameThing =  NOTE_NAMES[chordNote % 12] + getNoteType((double)(ticks - start_tick) / sequence.getResolution()) + " ";
+                    	chords += noteNameThing;
+                    	chordNote = -1;
+                    }
+                    //System.out.println("Note off, " + noteName + octave + " key=" + key + " velocity: " + velocity);
+                } else if (sm.getCommand() == NOTE_ON) {
+                    int key = sm.getData1();
+                    int octave = (key / 12)-1;
+                    int note = key % 12;
+                    String noteName = NOTE_NAMES[note];
+                    int velocity = sm.getData2();
+                    if(key != chordNote) {
+	                    if(chordNote != -1)
+	                    {
+	                    	String noteNameThing =  NOTE_NAMES[chordNote % 12] + getNoteType((double)(ticks - start_tick) / sequence.getResolution()) + " ";
+	                    	chords += noteNameThing;
+	                    	chordNote = -1;
+	                    }
+	                    
+	                    start_tick = ticks;
+	                    chordNote = key;
+                    }
+                }
+            }
+            lastTick = ticks;
+        }
+        
 
         System.out.println("Give me the title! ");
         String title = scanner.nextLine();
