@@ -32,20 +32,32 @@ public class Improviser {
 			if (note < melody.length - 1)
 				next = melody[note + 1];
 			Note current = event.getNote();
-			if (!event.getNote().isRest())
+			
+
+			if (!event.getNote().isRest()) { 
+
+				//If next three notes are all ascending or descending, add a color note
+				
+				if (isAscending(melody, note, 4) || isDescending(melody, note, 4)) {
+					Note colorful = getColorNote(melody, note);
+					System.out.println(colorful);
+					helper.addNote(colorful, 10, tick, 60);
+				}
 				helper.addNote(event.getNote(), event.getTicks(), tick, event.getVelocity());
+			}
+			
 			while(chordTick <= tick) {
 				ChordEvent c = progression[chordIndex];
 				if (!c.getChord().isBreak()) {
 					if (next != null && next.getNote().isRest()) {
 						int added = playBrokenChord(c, tick, helper, Direction.UP_DOWN, StyleTiming.MIDDLE);
-						added = added * 8 / 7;
+						added = added * 10 / 7;
 						chordTick += added;
 						tick += added;
 					}
 					else {
 						playChordRightHand(c, tick, nonRest, helper);
-						addRootOctave(c, chordTick, nonRest, helper);
+						addRootOctave(c, chordTick, nonRest.getOctaveDown(), helper);
 					}
 					//c.addSelfToMidi(helper, chordTick);
 				}
@@ -55,13 +67,6 @@ public class Improviser {
 				if (next == null) {
 					playEndingInversions(melody, helper, c, chordTick + 4);
 				}
-			}
-			
-			//If next three notes are all ascending or descending, add a color note
-			
-			if (isAscending(melody, note, 3) || isDescending(melody, note, 3)) {
-				Note colorful = getColorNote(melody, note);
-				helper.addNote(colorful, COLORFUL_NOTE_LENGTH, tick - COLORFUL_NOTE_LENGTH / 3, melody[note].getVelocity() * 4 / 5);
 			}
 			
 			if (!current.isRest())
@@ -78,7 +83,7 @@ public class Improviser {
 	public boolean isDescending(NoteEvent[] melody, int index, int length) {
 		if (index + length > melody.length)
 			return false;
-		for (int i = index; i < index + length; i++) {
+		for (int i = index; i < index + length - 1; i++) {
 			if (melody[i].getNote().getNumber() <= melody[i + 1].getNote().getNumber())
 				return false;
 		}
@@ -101,7 +106,7 @@ public class Improviser {
 		int currentNote = melody[index].getNote().getNumber();
 		int noteBefore = melody[index - 1].getNote().getNumber();
 		int noteAfter = melody[index + 1].getNote().getNumber();
-		if (noteBefore != currentNote && noteAfter != currentNote && ((noteBefore >= currentNote && currentNote >= noteAfter) || (noteBefore <= currentNote && currentNote <= noteAfter)))
+		if (noteBefore == currentNote || noteAfter == currentNote || noteBefore >= currentNote && currentNote >= noteAfter || noteBefore <= currentNote && currentNote <= noteAfter)
 			return false;
 		return true;
 	}
@@ -202,20 +207,21 @@ public class Improviser {
 		Note[] chordNotes = chord.getChord().getNotes();
 		for (int k = 1; k < chordNotes.length; k++) {
 			Note note = chordNotes[k];
-			while (note.getNumber() > high.getNumber()) 
+			while (note.getNumber() > high.getNumber()) {
 				note = note.getOctaveDown();
-			helper.addNote(note, chord.getTicks(), tick, chord.getVelocity() * 3 / 4);
+			}
+			helper.addNote(note, chord.getTicks(), tick, chord.getVelocity() * 3 / 5);
 		}
 	}
 	
 	public void addRootOctave(ChordEvent chord, int tick, Note high, AidedMidi helper) {
 		Note root = chord.getChord().getRoot();
 		while(root.getNumber() > high.getNumber()) {
-			root.getOctaveDown();
+			root = root.getOctaveDown();
 		}
 		root.getOctaveDown();
-		helper.addNote(root, chord.getTicks(), tick, chord.getVelocity() * 3 / 4);
-		helper.addNote(root.getOctaveDown(), chord.getTicks(), tick, chord.getVelocity() * 3 / 4);
+		helper.addNote(root, chord.getTicks(), tick, chord.getVelocity() * 3 / 5);
+		helper.addNote(root.getOctaveDown(), chord.getTicks(), tick, chord.getVelocity() * 3 / 5);
 	}
 	
 	
