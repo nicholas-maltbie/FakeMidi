@@ -82,6 +82,21 @@ public class LeadSheet {
 		
 	}
 	
+	public static int getTicks(String noteType) {
+		char tickchar = noteType.charAt(noteType.length() - 1);
+		switch (tickchar) {
+			case 'w': return 24 * 4;
+			case 'h': return 24 * 2;
+			case 'q': return 24;
+			case 'i': return 24 / 4;
+			case 's': return 24 / 8;
+			case 't': return 1;
+			case 'x': return 1;
+			case 'o': return 1;
+			default: return 1;
+		}
+	}
+	
 	public ChordEvent[] getChordProgression() {
 		return chordProgression.toArray(new ChordEvent[chordProgression.size()]);
 	}
