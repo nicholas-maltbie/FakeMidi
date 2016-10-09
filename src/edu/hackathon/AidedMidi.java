@@ -81,7 +81,6 @@ public class AidedMidi {
 			mm.setMessage(ShortMessage.NOTE_OFF,(note.getNumber() + 20),velocity);
 			me = new MidiEvent(mm,(long)(start + length));
 			t.add(me);
-			System.out.println(start);
 		} catch (InvalidMidiDataException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
