@@ -6,6 +6,7 @@ public class Scale {
 	}
 	private Note[] notes;
 	private Type type;
+	
 	public Scale(Note note, Type type) {
 		this.type = type;
 		notes = new Note[8];
@@ -48,4 +49,12 @@ public class Scale {
 			notes[7] = notes[6].getHalfStepUp();
 		}
 	}
+	
+	public Note getNote(int offset) {
+		if (offset >= 9) {
+				return new Scale(notes[0].getOctaveUp(), type).getNote(offset - 7);
+		}
+		return notes[offset - 1];
+	}
+	
 }

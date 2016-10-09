@@ -71,6 +71,14 @@ public class Note {
 		return new Note(number - 1);
 	}
 
+	public Note getOctaveUp() {
+		return new Note(number + 12);
+	}
+	
+	public Note getOctaveDown() {
+		return new Note(number - 12);
+	}
+	
 	
 	public static void main(String[] args) {
 		System.out.println(new Note("Eb+3").getFrequency());

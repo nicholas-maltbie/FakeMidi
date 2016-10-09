@@ -15,9 +15,10 @@ package edu.hackathon;
  * Title, Composer, timeTop/timeBottom, key, chords, notes
  * 
  * Example of a test song:
- * 	"Old devil Moon, E.Y. Harburg, 2/2, F, Fw | Ebi. Ebs Ebi Ebs Ebq Gq, 
+ * 	"Old devil Moon, E.Y. Harburg, 2/2, F, Fw | Ebi. Ebs Ebi Ebs Ebq Gq, "
+ * 	"The Entertainer, Scott Joplin, 4/4, C, E:8
  * 
- * notes are saved as follows: note
+ * notes are saved as follows: note:length
  * 	note or rest, for example:
  * 		C (middle C)
  * 		C+ (C one octave up)
