@@ -3,12 +3,14 @@ package edu.hackathon;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
@@ -27,7 +29,7 @@ public class FakeGUI extends JFrame implements ActionListener {
 	
 	public FakeGUI() {
 		super ("Fake Midi Maker");
-		this.setBounds(100, 100, 700, 200);
+		this.setBounds(100, 100, 700, 235);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -52,11 +54,18 @@ public class FakeGUI extends JFrame implements ActionListener {
 		exportText = new JTextField("Export location");
 		loadText = new JTextField("Load file");
 		
-		ImageIcon fakemidi = new ImageIcon("fakemidi.png");
-		JLabel label = new JLabel("", fakemidi, JLabel.CENTER);
-		JPanel background = new JPanel();
-		background.add(label);
-		getContentPane().add(background);
+		ImageIcon icon = new ImageIcon("fakemidi.png");
+		JLabel label = new JLabel();
+		label.setIcon(icon);
+		label.setAlignmentX(LEFT_ALIGNMENT);
+		getContentPane().add(label);
+		getContentPane().add(Box.createVerticalStrut(20));
+		
+		//ImageIcon fakemidi = new ImageIcon("fakemidi.png");
+		//JLabel label = new JLabel("", fakemidi, JLabel.CENTER);
+		//JPanel background = new JPanel();
+		//background.add(label);
+		//getContentPane().add(background);
 
 		JPanel loading = new JPanel();
 		loading.setLayout(new BoxLayout(loading, BoxLayout.LINE_AXIS));
