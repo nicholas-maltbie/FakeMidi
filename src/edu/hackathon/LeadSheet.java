@@ -34,7 +34,7 @@ import java.util.ArrayList;
  * 		Bf (B flat)
  * 		R (rest)
  * 		E# (E sharp)
- * 	length is the type of note:
+ * 	length is the type of note (A . after the letter means a dotted note):
  * 		whole is w	(4 beats)
  * 		half h		(2 beats)
  * 		quarter q	(1 beat)
@@ -47,9 +47,11 @@ import java.util.ArrayList;
  * chords are saved as follows: {chord_name:length, chord_name:length, r, ...}
  *	chord_name is the name of the chord, for example:
  * 		C (C major)
- * 		Bf (B flat major)
+ * 		Bb (B flat major)
  *  	Gm (G minor)
- *  	Bfmaj7 (B flat mojor 7)
+ *  	G#m	(G# minor)
+ *  	Bbmaj7 (B flat mojor 7)
+ *  	F#min (F sharp minor)
  *  length is the same as before
  *	length is the length in beats until the next chord occurs
  * 
@@ -77,7 +79,50 @@ public class LeadSheet {
 		
 		melody = new ArrayList<>();
 		for (String noteString : parts[4].trim().split(" ")) {
+			int typeLength = 1;
+			if (noteString.charAt(noteString.length() - 1) == '.')
+				typeLength = 2;
+			String note = noteString.substring(0, noteString.length() - typeLength);
+			String type = noteString.substring(noteString.length() - typeLength);
+			Note noteValue = new Note(note);
+			int ticks = getTicks(type.substring(0, 1));
+			if (typeLength == 2)
+				ticks = (int)(ticks * 1.5);
+			melody.add(new NoteEvent(ticks, 60, noteValue));
+		}
+		
+		chordProgression = new ArrayList<>();
+		for (String chordString : parts[5].trim().split(" ")) {
+			int typeLength = 1;
+			if (chordString.charAt(chordString.length() - 1) == '.')
+				typeLength = 2;
+			chordString = chordString.substring(0, chordString.length() - typeLength);
+			String type = chordString.substring(chordString.length() - typeLength);
+			int ticks = getTicks(type.substring(0, 1));
+			if (typeLength == 2)
+				ticks = (int)(ticks * 1.5);
 			
+			String numValue = "";
+			if (Character.isDigit(chordString.charAt(chordString.length() - 1))) {
+				numValue = chordString.substring(chordString.length() - 1);
+				chordString = chordString.substring(0, chordString.length() - 1);
+			}
+			String noteValue = "";
+			int noteLength = 1;
+			if (chordString.charAt(1) == '#' || chordString.charAt(1) == 'b') 
+				noteLength = 2;
+			noteValue = chordString.substring(0, noteLength);
+			chordString = chordString.substring(noteLength);
+			
+			String typeValue = "maj";
+			if (chordString.equals("min") || chordString.equals("m"))
+				typeValue = "min";
+			
+			chordString = noteValue + ":" + typeValue;
+			if (!numValue.isEmpty())
+				chordString += ":" + numValue;
+			
+			chordProgression.add(new ChordEvent(ticks, 60, new Chord(chordString)));
 		}
 		
 	}
