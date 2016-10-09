@@ -234,4 +234,41 @@ public class Improviser {
 		joplin.makeMusic("EntertainingSong.mid");
 	
 	}
+	
+	public double getInterest(NoteEvent[] melody, int index) {
+		int currentVelocity = melody[index].getVelocity();
+		double final_interest = 0;
+		double low_interest = .02;
+		double high_interest = .05;
+		
+		// Get the general direction.
+		int generalDir = 0;
+		for(int l = melody.length - 1; l > 1 && l > melody.length - 5; l--) {
+			generalDir += melody[l - 1].getNote().getDist(melody[l].getNote());
+		}
+		
+		// Add weights based on general direction.
+		if (generalDir < 0) final_interest -= low_interest;
+		if (generalDir > 0)	final_interest += high_interest;
+		if (melody[index].getNote().getNumber() > melody[index - 1].getNote().getNumber())
+			final_interest += high_interest;
+		
+		// Add weights based on repetitions in the last 10 notes
+		boolean isRepeated = false;
+		for (int i = 0; i < 10; i--) {
+			if (i < 0) break;
+			if (melody[index] == melody[index - i - 1])	isRepeated = true;
+		}
+		if (isRepeated) final_interest += high_interest;
+		else final_interest -= low_interest;
+		
+		// Add weights based on whether it's before or after a rest.
+		if (melody[index - 1].getNote().isRest()) final_interest -= low_interest * 2.5;
+		if (melody[index + 1].getNote().isRest()) final_interest += high_interest;
+		
+		// Add weights based on whether the note's at the end of the song.
+		if (index == melody.length - 1) final_interest += high_interest;
+		
+		return final_interest;	
+	}
 }
